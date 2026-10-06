@@ -48,6 +48,7 @@ This creates or refreshes:
 assets/contrib-heatmap.svg
 assets/info-card.svg
 assets/sandeep-ascii.svg
+assets/profile-photo.jpg
 data/contributions.json
 ```
 
@@ -59,6 +60,7 @@ Open `README.md` in VS Code preview, or open the SVG files directly in a browser
 assets/contrib-heatmap.svg
 assets/info-card.svg
 assets/sandeep-ascii.svg
+assets/profile-photo.jpg
 ```
 
 GitHub will render the assets through relative paths such as `./assets/contrib-heatmap.svg`.
@@ -69,6 +71,7 @@ GitHub will render the assets through relative paths such as `./assets/contrib-h
 python -m compileall scripts
 python scripts/generate_all.py
 python -c "import xml.etree.ElementTree as ET; [ET.parse(p) for p in ['assets/contrib-heatmap.svg','assets/info-card.svg','assets/sandeep-ascii.svg']]; print('svg xml ok')"
+python -c "from PIL import Image; im=Image.open('assets/profile-photo.jpg'); print('profile photo ok', im.size)"
 ```
 
 To verify scripts work from another directory:

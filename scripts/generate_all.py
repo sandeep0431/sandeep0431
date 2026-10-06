@@ -23,6 +23,7 @@ def main() -> int:
         "make_info_card.py",
         "prep_photo.py",
         "make_ascii_svg.py",
+        "make_profile_photo.py",
     ]
     for step in steps:
         _run(step)

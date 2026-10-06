@@ -1,15 +1,18 @@
-"""Prepare source-photo.jpg for ASCII portrait generation."""
+"""Prepare source photo for clean, high-fidelity ASCII portrait generation."""
 
 from __future__ import annotations
 
 from pathlib import Path
+import numpy as np
+from PIL import Image, ImageFilter, ImageOps, ImageEnhance
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_PATH = ROOT / "source-photo.jpg"
 SOURCE_CANDIDATES = (
     SOURCE_PATH,
-    ROOT / "source-photo.jpeg",
     ROOT / "source-photo.jpg.jpeg",
+    ROOT / "source-photo.jpeg",
+    ROOT / "source-photo.png",
 )
 PREPPED_PATH = ROOT / "source-photo-prepped.png"
 
@@ -23,35 +26,71 @@ def find_source_photo() -> Path | None:
 
 
 def prepare_photo(source: Path | None = None, output: Path = PREPPED_PATH) -> Path | None:
-    """Crop, enhance, and save a local photo if Pillow is available."""
+    """Crop, isolate subject from background, and enhance facial features."""
     source = source or find_source_photo()
     if source is None:
         return None
-    try:
-        from PIL import Image, ImageEnhance, ImageOps
-    except ImportError as exc:
-        raise RuntimeError("Pillow is required for portrait generation. Install scripts/requirements-local.txt.") from exc
 
-    image = Image.open(source).convert("RGB")
-    width, height = image.size
-    # GitHub README portraits read best when the face and shoulders dominate
-    # the frame. This keeps the original untouched and writes only a prepped PNG.
-    target_ratio = 0.78
-    crop_height = int(height * 0.62)
-    crop_width = min(width, int(crop_height * target_ratio))
-    top = int(height * 0.03)
-    left = max(0, int((width - crop_width) * 0.58))
-    right = min(width, left + crop_width)
-    bottom = min(height, top + crop_height)
-    if right - left < crop_width:
-        left = max(0, right - crop_width)
-    image = image.crop((left, top, right, bottom))
+    src = Image.open(source).convert("RGB")
+    w, h = src.size
 
-    image = ImageOps.grayscale(image)
-    image = ImageOps.autocontrast(image, cutoff=1)
-    image = ImageEnhance.Contrast(image).enhance(1.35)
-    image = ImageEnhance.Brightness(image).enhance(1.04)
-    image.save(output)
+    # Crop tightly centered around head, shoulders, and upper torso
+    crop_left = int(w * 0.25)
+    crop_right = int(w * 0.75)
+    crop_top = int(h * 0.05)
+    crop_bottom = int(h * 0.61)
+
+    crop_img = src.crop((crop_left, crop_top, crop_right, crop_bottom))
+    cw, ch = crop_img.size
+    rgb = np.array(crop_img, dtype=float)
+    gray = np.array(crop_img.convert("L"), dtype=float)
+
+    Y, X = np.ogrid[:ch, :cw]
+
+    # 1. Head ROI
+    head_dist = ((X - 0.52 * cw) / (0.27 * cw)) ** 2 + ((Y - 0.26 * ch) / (0.25 * ch)) ** 2
+    in_head = head_dist <= 1.0
+
+    # 2. Torso ROI (tailored to actual body silhouette)
+    rel_y = np.clip((Y - 0.44 * ch) / (0.56 * ch), 0, 1)
+    torso_center = (0.50 - 0.02 * rel_y) * cw
+    torso_half_width = (0.26 + 0.13 * rel_y) * cw
+    in_torso = (Y >= 0.44 * ch) & (np.abs(X - torso_center) <= torso_half_width)
+
+    subject_roi = in_head | in_torso
+
+    # 3. Clean background mask
+    mask = subject_roi.astype(float)
+    bg_like = (gray > 175) & ((Y < 0.42 * ch) | (X > 0.78 * cw) | (X < 0.18 * cw))
+    mask[bg_like] = 0.0
+    mask[~subject_roi] = 0.0
+
+    # Smooth the mask boundary with Pillow GaussianBlur for natural edge transitions
+    mask_pil = Image.fromarray((mask * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(2.0))
+    mask = np.array(mask_pil, dtype=float) / 255.0
+    mask[~subject_roi] = 0.0
+
+    # 4. Feature and local contrast enhancement
+    gray_pil = Image.fromarray(gray.astype(np.uint8))
+    # Unsharp mask to emphasize glasses, eyes, nose, lips, hair, and shirt checks
+    sharp_pil = gray_pil.filter(ImageFilter.UnsharpMask(radius=2.0, percent=170, threshold=2))
+    sharp = np.array(sharp_pil, dtype=float)
+
+    # Normalize subject tones
+    subj_pixels = sharp[mask > 0.4]
+    if len(subj_pixels) == 0:
+        p_low, p_high = 0.0, 255.0
+    else:
+        p_low = np.percentile(subj_pixels, 2)
+        p_high = np.percentile(subj_pixels, 98)
+    norm = np.clip((sharp - p_low) / (p_high - p_low + 1e-5) * 255.0, 0, 255)
+
+    # Merge subject onto pure white background (255)
+    prepped = norm * mask + 255.0 * (1.0 - mask)
+    prepped_pil = Image.fromarray(prepped.astype(np.uint8))
+
+    output.parent.mkdir(parents=True, exist_ok=True)
+    prepped_pil.save(output)
     return output
 
 

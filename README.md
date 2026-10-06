@@ -16,7 +16,7 @@ Cybersecurity | AI/ML | Web Development | Cloud | Automation | Browser Agents
 <table>
   <tr>
     <td width="42%" valign="top">
-      <img src="./assets/sandeep-ascii.svg" alt="Animated ASCII portrait generated from source-photo.jpg">
+      <img src="./assets/sandeep-ascii.svg" alt="Animated ASCII portrait for Sandeep Kumar Sahu">
     </td>
     <td width="58%" valign="top">
 
