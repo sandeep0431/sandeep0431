@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="620" height="374" viewBox="0 0 620 374" role="img" aria-labelledby="title desc">
+<title id="title">Terminal profile card for Sandeep Kumar Sahu</title>
+<desc id="desc">Animated command output describing academic status, interests, and stack.</desc>
+<style>
+.panel{fill:#0d1117;stroke:#30363d;stroke-width:1}.bar{fill:#161b22}.dot-red{fill:#ff5f56}.dot-yellow{fill:#ffbd2e}.dot-green{fill:#27c93f}.prompt{fill:#58a6ff;font:600 15px ui-monospace,SFMono-Regular,Consolas,Liberation Mono,monospace}.key{fill:#7ee787;font:700 14px ui-monospace,SFMono-Regular,Consolas,Liberation Mono,monospace}.value{fill:#c9d1d9;font:14px ui-monospace,SFMono-Regular,Consolas,Liberation Mono,monospace}.row{opacity:0;animation:lineIn .5s ease forwards}@keyframes lineIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}@media (prefers-reduced-motion: reduce){.row{animation:none;opacity:1}}
+</style>
+<rect class="panel" x="0.5" y="0.5" width="619" height="373" rx="8"/>
+<rect class="bar" x="1" y="1" width="618" height="40" rx="8"/>
+<circle class="dot-red" cx="24" cy="21" r="6"/><circle class="dot-yellow" cx="44" cy="21" r="6"/><circle class="dot-green" cx="64" cy="21" r="6"/>
+<text class="prompt" x="24" y="68">sandeep@github ~ $ whoami</text>
+<g class="row" style="animation-delay:0.25s">
+<text class="key" x="24" y="92">USER    </text>
+<text class="value" x="128" y="92">Sandeep Kumar Sahu</text>
+</g>
+<g class="row" style="animation-delay:0.36s">
+<text class="key" x="24" y="120">ROLE    </text>
+<text class="value" x="128" y="120">B.Tech CSE @ VSSUT</text>
+</g>
+<g class="row" style="animation-delay:0.47s">
+<text class="key" x="24" y="148">STATUS  </text>
+<text class="value" x="128" y="148">4th semester completed</text>
+</g>
+<g class="row" style="animation-delay:0.58s">
+<text class="key" x="24" y="176">CGPA    </text>
+<text class="value" x="128" y="176">8.63 / 10</text>
+</g>
+<g class="row" style="animation-delay:0.69s">
+<text class="key" x="24" y="204">FOCUS   </text>
+<text class="value" x="128" y="204">Cybersecurity | AI/ML</text>
+</g>
+<g class="row" style="animation-delay:0.80s">
+<text class="key" x="24" y="232">BUILD   </text>
+<text class="value" x="128" y="232">Web | Cloud | Automation</text>
+</g>
+<g class="row" style="animation-delay:0.91s">
+<text class="key" x="24" y="260">STACK   </text>
+<text class="value" x="128" y="260">Python | TypeScript | React</text>
+</g>
+<g class="row" style="animation-delay:1.02s">
+<text class="key" x="24" y="288">CLOUD   </text>
+<text class="value" x="128" y="288">AWS | Serverless</text>
+</g>
+<g class="row" style="animation-delay:1.13s">
+<text class="key" x="24" y="316">CURRENT </text>
+<text class="value" x="128" y="316">AEGIS + TabMind</text>
+</g>
+</svg>

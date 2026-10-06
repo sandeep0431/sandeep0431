@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+.DS_Store
+.idea/
+.vscode/
+source-photo-prepped.png
+assets/sandeep-ascii-preview.png
